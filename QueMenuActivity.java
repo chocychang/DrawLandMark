@@ -1,3 +1,4 @@
+
 package com.edu.ncu.drawlandmark;
 
 import android.content.Intent;
@@ -15,7 +16,7 @@ public class QueMenuActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.activity_menu_que);
+        this.setContentView(R.layout.activity_que_menu);
 
         this.playButton = (Button) this.findViewById(R.id.btn_play);
         this.statsButton = (Button) this.findViewById(R.id.btn_stats);
@@ -42,4 +43,3 @@ public class QueMenuActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 }
-

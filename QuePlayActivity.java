@@ -10,34 +10,19 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Queue;
 import java.util.LinkedList;
-import java.util.Random;
 
+import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 
 public class QuePlayActivity extends Activity implements View.OnClickListener {
 
-    private int question_num=0;
-    private int correct_num=0;
-    private int wrong_num=0;
-    private String Id;  //設定題目的id範圍的參數
-    private ArrayList<String> questionIds = new ArrayList<>();
+    private static int QUESTIONS = 5;
 
-    public DatabaseReference fb;
-
+    private DBPref db;
     private TextView tv_question;
     private TextView tv_quiznum;
     private TextView tv_correctnum;
@@ -47,23 +32,22 @@ public class QuePlayActivity extends Activity implements View.OnClickListener {
     private Button option_3;
     private Button option_4;
 
-    private static final String TAG = "QuePlayActivity";
-    private static Random random = new Random();
+    private Queue<Question> questions = new LinkedList<Question>();
+    private Question active_question;
+    private int question_num=0;
+    private int correct_num=0;
+    private int wrong_num=0;
 
-
-    private Queue<Question> questionList = new LinkedList<Question>();
-    private Question questioning;
-
-    private GuessDialogActivity guessDialogActivity;
-
+    String solve;
+    private String Id;  //設定題目的id範圍的參數
+    Boolean guess_status = TRUE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("debug", "PlayActivity.onCreate");
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.activity_play_que);
+        this.setContentView(R.layout.activity_que_play);
 
-        //以下為xml檔物件與java做連結
         this.tv_question = (TextView) this.findViewById(R.id.tv_question);
         this.tv_quiznum = (TextView) this.findViewById(R.id.quiznumber);
         this.tv_correctnum = (TextView) this.findViewById(R.id.correct_num);
@@ -73,9 +57,37 @@ public class QuePlayActivity extends Activity implements View.OnClickListener {
         this.option_3 = (Button) this.findViewById(R.id.btn_option_3);
         this.option_4 = (Button) this.findViewById(R.id.btn_option_4);
 
-        this.fb = FirebaseDatabase.getInstance().getReference("questions");
+        this.db = new DBPref( this );
+        Cursor questions = this.db.getQuestions(DBPref.Category.PINGXI, DBPref.Difficulty.EASY, QUESTIONS);
 
+        if (questions.moveToFirst()) {
+            do {
+                String question = questions.getString( questions.getColumnIndex("question") );
+                String answer   = questions.getString( questions.getColumnIndex("correct_answer") );
+                Queue<String> wrong  = new LinkedList<String>();
 
+                wrong.offer( questions.getString( questions.getColumnIndex("wrong_answer_1") ) );
+                wrong.offer( questions.getString( questions.getColumnIndex("wrong_answer_2") ) );
+                wrong.offer( questions.getString( questions.getColumnIndex("wrong_answer_3") ) );
+
+                for (int i = 1; i <= 7; i++) {
+                    int idx = questions.getColumnIndex("wrong_answer_" + i);
+                    if (idx != -1) {
+                        wrong.offer( questions.getString(idx) );
+                    } else {
+                        break;
+                    }
+                }
+
+                String solve = questions.getString( questions.getColumnIndex("solve"));
+
+                this.questions.offer( new Question(question, answer, (String[]) wrong.toArray(new String[wrong.size()]), solve) );
+            } while(questions.moveToNext());
+        }
+
+        this.db.close();
+
+        this.setQuestion(this.questions.poll());
 
         this.option_1.setOnClickListener(this);
         this.option_2.setOnClickListener(this);
@@ -83,96 +95,50 @@ public class QuePlayActivity extends Activity implements View.OnClickListener {
         this.option_4.setOnClickListener(this);
     }
 
-    @Override
-    public void onStart(){
-        super.onStart();
+    private void setQuestion(Question question) {
+        this.question_num++;
 
-        this.fb.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-             //   String text =dataSnapshot.getValue(String.class);
-                for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
+        this.active_question = question;
 
-                    questionIds.add(childSnapshot.getKey());
-                    Question questiontest = childSnapshot.getValue(Question.class);
-                    questionList.offer(questiontest);
+        String[] answers = question.getAnswers();
 
-                    Log.d(TAG,"媽的" + questionList.size());
-                }
-            }
+        this.tv_question.setText( question.getQuestion() );
+        this.option_1.setText( answers[0] );
+        this.option_2.setText( answers[1] );
+        this.option_3.setText( answers[2] );
+        this.option_4.setText( answers[3] );
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+        this.solve = question.getSolve();
 
-            }
-        });
-
-        questionList.poll();
-        questioning = questionList.poll();
-        tv_question.setText(questioning.getQuestion());
-        option_1.setText( questioning.getCorrect_answer() );
-        option_2.setText( questioning.getWrong_answer_1() );
-        option_3.setText( questioning.getWrong_answer_2() );
-        option_4.setText( questioning.getWrong_answer_3() );
-
-        //setQuestionIndex();
-
-       //setQuestion();
-     }
-
-    private void setQuestionIndex(){
-       // int questionIndex = random.nextInt(4)+1;
-       // this.setQuestion(this.questionList.get(0));
-        question_num++;
-    }
-
-    private void setQuestion() {
-        Question question = this.questionList.poll();
-        this.questioning = question;
-        // Add value event listener to the post
-        // [START post_value_event_listener]
-        //this.questioning = question;
-
-        tv_quiznum.setText(getString(R.string.str_quiznumber, question_num));
-        tv_question.setText( this.questioning.getQuestion());
-         option_1.setText( this.questioning.getCorrect_answer() );
-         option_2.setText( this.questioning.getWrong_answer_1() );
-         option_3.setText( this.questioning.getWrong_answer_2() );
-         option_4.setText( this.questioning.getWrong_answer_3() );
-
-        //String[] answers = active_question.getAnswers();
-
+        this.tv_quiznum.setText("第"+this.question_num+"題");
 
     }
-
 
 
     @Override
     public void onClick(View view) {
         Button clicked = (Button) view;
-        if (clicked.getText().toString() == this.questioning.getAnswer()) {
-            if (this.questionList.size() > 0 && question_num>5) {
+        if (clicked.getText().toString() == this.active_question.getAnswer()) {
+            if (this.questions.size() > 0 && question_num<5) {
                 correct_num += 1;
-                setQuestionIndex();
+                this.setQuestion(this.questions.poll());
                 this.tv_correctnum.setText(getString(R.string.str_correctnumber, correct_num));
+                this.guess_status = TRUE;
                 showGuessDialog();
             } else {
-                Toast t = Toast.makeText(this, "You win!", Toast.LENGTH_LONG);
+                Toast t = Toast.makeText(this, "恭喜你完成五題！", Toast.LENGTH_LONG);
                 t.show();
                 this.finish();
             }
         } else {
-            if (this.questionList.size() > 0) {
+            if (this.questions.size() > 0 && question_num<5) {
                 wrong_num += 1;
+                this.setQuestion(this.questions.poll());
                 this.tv_wrongnum.setText(getString(R.string.str_wrongnumber, wrong_num));
-                Toast t = Toast.makeText(this, "You lose!", Toast.LENGTH_LONG);
-                t.show();
-                setQuestionIndex();
-                guessDialogActivity = new GuessDialogActivity(TRUE);
-                guessDialogActivity.guess_status=TRUE;
+                this.guess_status = FALSE;
                 showGuessDialog();
             } else {
-                Toast t = Toast.makeText(this, "You lose!", Toast.LENGTH_LONG);
+                Toast t = Toast.makeText(this, "恭喜你完成五題！", Toast.LENGTH_LONG);
                 t.show();
                 this.finish();
             }
@@ -181,7 +147,10 @@ public class QuePlayActivity extends Activity implements View.OnClickListener {
 
 
     public void showGuessDialog(){
-        this.startActivity( new Intent(QuePlayActivity.this, GuessDialogActivity.class));
+        Intent intent = new Intent(this, GuessDialogActivity.class);
+        intent.putExtra("GuessStatus_EXTRA", this.guess_status);
+        intent.putExtra("Solve_MSG", this.solve);
+        startActivity(intent);
     }
 }
 

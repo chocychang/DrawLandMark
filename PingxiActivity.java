@@ -26,6 +26,7 @@ public class PingxiActivity extends Activity implements ViewPager.OnPageChangeLi
 
     TextView tv_guess;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

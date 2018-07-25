@@ -22,10 +22,16 @@
         android:id="@+id/tv_knowledge"
         android:layout_width="195dp"
         android:layout_height="131dp"
+        android:layout_marginBottom="116dp"
+        android:layout_marginEnd="52dp"
+        android:layout_marginRight="52dp"
+        android:layout_marginTop="8dp"
         android:background="@android:color/holo_green_light"
         android:text="小知識區"
-        tools:layout_editor_absoluteX="115dp"
-        tools:layout_editor_absoluteY="310dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/vp"
+        app:layout_constraintVertical_bias="0.925" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/vp"
@@ -56,11 +62,17 @@
         android:id="@+id/tv_guess"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
         android:text="猜猜看"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="24sp"
         android:textStyle="bold"
-        tools:layout_editor_absoluteX="278dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/tv_knowledge"
         tools:layout_editor_absoluteY="254dp" />
 
 </android.support.constraint.ConstraintLayout>

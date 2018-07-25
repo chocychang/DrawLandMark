@@ -3,8 +3,13 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
     <color name="lightBlue">#CCEEFF</color>
     <color name="lightYellow">#f6e9a9</color>
     <color name="lightGreen">#7ce0bb</color>
     <color name="lightPink">#ffb7dd</color>
+
+    <color name="transparent_background">#501a1919</color>
+    <drawable name="translucent_background">#5500ff</drawable>
+    <color name = "transparent">#9000</color>
 </resources>
