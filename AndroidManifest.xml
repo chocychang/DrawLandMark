@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.edu.ncu.drawlandmark">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".NewTaipeiMap"
+            android:theme="@style/NoTitle" />
+        <activity
+            android:name=".PingxiActivity"
+            android:theme="@style/NoTitle" />
+        <activity android:name=".QueMenuActivity" />
+        <activity android:name=".QuePlayActivity"
+            android:theme="@style/NoTitle"/>
+        <activity
+            android:name=".GuessDialogActivity"
+            android:theme="@style/dialog" />
+        <activity android:name=".SolveActivity"
+               android:theme="@style/Transparent" />
+    </application>
+
+</manifest>
