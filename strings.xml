@@ -13,9 +13,9 @@
     <string name="title_activity_login">Sign in</string>
 
     <!-- Strings related to login -->
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password (optional)</string>
-    <string name="action_sign_in">Sign in or register</string>
+    <string name="prompt_email">輸入你的信箱</string>
+    <string name="prompt_password">輸入你的密碼</string>
+    <string name="action_sign_in">登入</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
@@ -27,4 +27,26 @@
 
     <string name="leave">離開</string>
     <string name="next">下一題</string>
+    <string name="sign_out">登出</string>
+    <string name="login_error">你的輸入格式錯誤唷！再檢查一次</string>
+    <string name="login_error_title">登入失敗QQ</string>
+    <string name="register_error_title">註冊格式錯誤</string>
+    <string name="ok">我知道了</string>
+    <string name="register">註冊</string>
+    <string name="timeup">時間到囉！</string>
+    <string name="timeup_msg">Bubble,你已經用1小時囉\n該讓眼睛休息一下了~</string>
+    <string name="title_activity_navigation">NavigationActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">DrawLandMark</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">設定</string>
+
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+
+    <string name="welcome_msg">歡迎你加入台灣童學繪\n先來讓我們來認識你一下吧</string>
+    <string name="name">暱名:</string>
+    <string name="setnewprofile">建立新頭貼</string>
 </resources>

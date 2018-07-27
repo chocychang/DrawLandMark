@@ -42,6 +42,8 @@ import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 public class RegisterActivity extends AppCompatActivity {
@@ -49,6 +51,7 @@ public class RegisterActivity extends AppCompatActivity {
     FirebaseAuth auth;
     FirebaseAuth.AuthStateListener authListener;
     private String userUID;
+    private DatabaseReference mdatabase;
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -80,7 +83,6 @@ public class RegisterActivity extends AppCompatActivity {
                     Log.d("onAuthStateChanged", "已註冊:" +
                             user.getUid());
                     userUID = user.getUid();
-                    startActivity(new Intent(RegisterActivity.this, MainActivity.class));
                 }else{
                     Log.d("onAuthStateChanged", "未註冊");
                 }
@@ -162,7 +164,7 @@ public class RegisterActivity extends AppCompatActivity {
             // form field with an error.
             focusView.requestFocus();
             new AlertDialog.Builder(RegisterActivity.this)
-                    .setTitle(R.string.login_error_title)
+                    .setTitle(R.string.register_error_title)
                     .setMessage(R.string.login_error)
                     .setPositiveButton(R.string.ok, null)
                     .show();
@@ -200,14 +202,21 @@ public class RegisterActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 if(task.isSuccessful()){
-                                    startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+                                    mdatabase = FirebaseDatabase.getInstance().getReference("drawlandmark-db");
+                                    DatabaseReference userRef = mdatabase.child("users");
+                                    User user = new User(userUID);
+                                    userRef.push().setValue(user);
+                                    startActivity(new Intent(RegisterActivity.this, SetProfileActivity.class));
                                 }else{
+                                    Log.d("註冊失敗","註冊失敗");
                                     Intent intent = new Intent(RegisterActivity.this, RegisterActivity.class);
+                                    startActivity(intent);
                                 } }})
                         .show();
 
                             }
                         });
+
     }
 
     private boolean isEmailValid(String email) {
